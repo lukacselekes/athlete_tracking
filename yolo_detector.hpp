@@ -28,7 +28,7 @@ class Inference
 {
   public:
     Inference(const std::string &onnxModelPath, const cv::Size &modelInputShape = {640, 640},
-              const std::string &classesTxtFile = "", const bool &runWithCuda = true);
+              const bool &runWithCuda = true);
     std::vector<Detection> runInference(const cv::Mat &input);
 
   private:
@@ -37,7 +37,6 @@ class Inference
     cv::Mat formatToSquare(const cv::Mat &source);
 
     std::string modelPath{};
-    std::string classesPath{};
     bool        cudaEnabled{};
 
     std::vector<std::string> classes{"person"};

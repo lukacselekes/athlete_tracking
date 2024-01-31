@@ -2,16 +2,13 @@
 
 namespace yolo
 {
-Inference::Inference(const std::string &onnxModelPath, const cv::Size &modelInputShape,
-                     const std::string &classesTxtFile, const bool &runWithCuda)
+Inference::Inference(const std::string &onnxModelPath, const cv::Size &modelInputShape, const bool &runWithCuda)
 {
     modelPath   = onnxModelPath;
     modelShape  = modelInputShape;
-    classesPath = classesTxtFile;
     cudaEnabled = runWithCuda;
 
     loadOnnxNetwork();
-    // loadClassesFromFile(); The classes are hard-coded for this example
 }
 
 std::vector<Detection> Inference::runInference(const cv::Mat &input)
@@ -86,10 +83,7 @@ std::vector<Detection> Inference::runInference(const cv::Mat &input)
         result.class_id   = class_ids[idx];
         result.confidence = confidences[idx];
 
-        std::random_device                 rd;
-        std::mt19937                       gen(rd());
-        std::uniform_int_distribution<int> dis(100, 255);
-        result.color = cv::Scalar(dis(gen), dis(gen), dis(gen));
+        result.color = cv::Scalar(0, 255, 0);
 
         result.className = classes[result.class_id];
         result.box       = boxes[idx];
@@ -98,18 +92,6 @@ std::vector<Detection> Inference::runInference(const cv::Mat &input)
     }
 
     return detections;
-}
-
-void Inference::loadClassesFromFile()
-{
-    std::ifstream inputFile(classesPath);
-    if (inputFile.is_open())
-    {
-        std::string classLine;
-        while (std::getline(inputFile, classLine))
-            classes.push_back(classLine);
-        inputFile.close();
-    }
 }
 
 void Inference::loadOnnxNetwork()
