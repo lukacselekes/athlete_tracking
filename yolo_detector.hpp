@@ -3,54 +3,55 @@
 
 // Cpp native
 #include <fstream>
-#include <vector>
-#include <string>
 #include <random>
+#include <string>
+#include <vector>
 
 // OpenCV / DNN / Inference
+#include <opencv2/dnn.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/opencv.hpp>
-#include <opencv2/dnn.hpp>
 
 namespace yolo
 {
 
-    struct Detection
-    {
-        int class_id{0};
-        std::string className{};
-        float confidence{0.0};
-        cv::Scalar color{};
-        cv::Rect box{};
-    };
+struct Detection
+{
+    int         class_id{0};
+    std::string className{};
+    float       confidence{0.0};
+    cv::Scalar  color{};
+    cv::Rect    box{};
+};
 
-    class Inference
-    {
-    public:
-        Inference(const std::string &onnxModelPath, const cv::Size &modelInputShape = {640, 640}, const std::string &classesTxtFile = "", const bool &runWithCuda = true);
-        std::vector<Detection> runInference(const cv::Mat &input);
+class Inference
+{
+  public:
+    Inference(const std::string &onnxModelPath, const cv::Size &modelInputShape = {640, 640},
+              const std::string &classesTxtFile = "", const bool &runWithCuda = true);
+    std::vector<Detection> runInference(const cv::Mat &input);
 
-    private:
-        void loadClassesFromFile();
-        void loadOnnxNetwork();
-        cv::Mat formatToSquare(const cv::Mat &source);
+  private:
+    void    loadClassesFromFile();
+    void    loadOnnxNetwork();
+    cv::Mat formatToSquare(const cv::Mat &source);
 
-        std::string modelPath{};
-        std::string classesPath{};
-        bool cudaEnabled{};
+    std::string modelPath{};
+    std::string classesPath{};
+    bool        cudaEnabled{};
 
-        std::vector<std::string> classes{"person"};
+    std::vector<std::string> classes{"person"};
 
-        cv::Size2f modelShape{};
+    cv::Size2f modelShape{};
 
-        float modelConfidenceThreshold{0.25};
-        float modelScoreThreshold{0.45};
-        float modelNMSThreshold{0.50};
+    float modelConfidenceThreshold{0.25};
+    float modelScoreThreshold{0.45};
+    float modelNMSThreshold{0.50};
 
-        bool letterBoxForSquare = true;
+    bool letterBoxForSquare = true;
 
-        cv::dnn::Net net;
-    };
+    cv::dnn::Net net;
+};
 
 } // namespace yolo
 
