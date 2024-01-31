@@ -12,7 +12,9 @@ add_executable(athlete_tracking
 main.cpp
 
 yolo_detector.hpp
-yolo_detector.cpp)
+yolo_detector.cpp
+tracking_controller.hpp
+tracking_controller.cpp)
 
 target_link_libraries(athlete_tracking ${OpenCV_LIBS})
 

@@ -32,7 +32,6 @@ class Inference
     std::vector<Detection> runInference(const cv::Mat &input);
 
   private:
-    void    loadClassesFromFile();
     void    loadOnnxNetwork();
     cv::Mat formatToSquare(const cv::Mat &source);
 
