@@ -24,12 +24,14 @@ struct Detection
     cv::Rect    box{};
 };
 
+using DetectionVector = std::vector<Detection>;
+
 class Inference
 {
   public:
     Inference(const std::string &onnxModelPath, const cv::Size &modelInputShape = {640, 640},
               const bool &runWithCuda = true);
-    std::vector<Detection> runInference(const cv::Mat &input);
+    DetectionVector runInference(const cv::Mat &input);
 
   private:
     void    loadOnnxNetwork();
