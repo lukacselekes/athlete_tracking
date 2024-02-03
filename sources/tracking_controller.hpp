@@ -29,13 +29,11 @@ class TrackingController
     bool wasDetectedInCurrentFrame() const;
 
   private:
-    static void drawLineForTwoDetections(const Mat &f_input_frame, const yolo::Detection &f_detection1,
-                                         const yolo::Detection &f_detection2);
-
     yolo::Inference       m_yolo_detector;
     yolo::DetectionVector m_detections;
 
     bool m_wasDetectedInCurrentFrame = false;
+    int  m_frameCounter              = 0;
 };
 
 } // namespace tracking

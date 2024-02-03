@@ -22,6 +22,7 @@ struct Detection
     float       confidence{0.0};
     cv::Scalar  color{};
     cv::Rect    box{};
+    int         frameNumber{0};
 };
 
 using DetectionVector = std::vector<Detection>;

@@ -12,7 +12,7 @@ const bool        RUN_ON_GPU = false;
 constexpr float OUTPUT_SCALE = 0.8F;
 const int       VIDEO_FPS    = 30;
 
-const std::string VIDEO_NAME   = "drill_2";
+const std::string VIDEO_NAME   = "exercises";
 const std::string VIDEO_FORMAT = ".mp4";
 const std::string VIDEO_PATH   = PROJECT_BASE_PATH + "/assets/" + VIDEO_NAME + VIDEO_FORMAT;
 

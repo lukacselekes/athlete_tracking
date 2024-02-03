@@ -9,6 +9,9 @@ TrackingController::TrackingController(const yolo::Inference &f_yolo_detector) :
 
 void TrackingController::runTracking(const Mat &f_input_frame)
 {
+    // Increase frame counter
+    m_frameCounter++;
+
     // Run inference using yolo detector
     std::vector<yolo::Detection> output = m_yolo_detector.runInference(f_input_frame);
 
@@ -22,7 +25,11 @@ void TrackingController::runTracking(const Mat &f_input_frame)
     assert(output.size() == 1 && "Only one person should be detected");
 
     // Save detection
-    m_detections.push_back(output[0]);
+    auto &detection = output[0];
+    // Set frame number
+    detection.frameNumber = m_frameCounter;
+
+    m_detections.push_back(detection);
     m_wasDetectedInCurrentFrame = true;
 }
 
@@ -80,8 +87,8 @@ void TrackingController::saveDetectionsToFile(const std::string &f_filePath) con
     // Write detections to file
     for (const auto &detection : m_detections)
     {
-        file << detection.box.x << " " << detection.box.y << " " << detection.box.width << " " << detection.box.height
-             << std::endl;
+        file << detection.frameNumber << " " << detection.box.x << " " << detection.box.y << " " << detection.box.width
+             << " " << detection.box.height << std::endl;
     }
 
     std::cout << "Detections were saved to: " << f_filePath << std::endl;
