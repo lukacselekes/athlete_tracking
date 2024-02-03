@@ -13,7 +13,7 @@ using namespace cv;
 int main(int argc, char **argv)
 {
     // Init yolo detector
-    yolo::Inference yolo(config::YOLO_MODEL_PATH, config::MODEL_INPUT_SHAPE, config::RUN_ON_GPU);
+    yolo::YoloDetector yolo(config::YOLO_MODEL_PATH, config::MODEL_INPUT_SHAPE, config::RUN_ON_GPU);
 
     // Init video capture
     VideoCapture cap(config::VIDEO_PATH);

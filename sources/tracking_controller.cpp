@@ -3,17 +3,17 @@
 namespace tracking
 {
 
-TrackingController::TrackingController(const yolo::Inference &f_yolo_detector) : m_yolo_detector(f_yolo_detector)
+TrackingController::TrackingController(const yolo::YoloDetector &f_yoloDetector) : m_yoloDetector(f_yoloDetector)
 {
 }
 
-void TrackingController::runTracking(const Mat &f_input_frame)
+void TrackingController::runTracking(const Mat &f_inputFrame)
 {
     // Increase frame counter
     m_frameCounter++;
 
     // Run inference using yolo detector
-    std::vector<yolo::Detection> output = m_yolo_detector.runInference(f_input_frame);
+    std::vector<yolo::Detection> output = m_yoloDetector.runInference(f_inputFrame);
 
     // If no person was detected, return
     if (output.empty())
@@ -38,24 +38,24 @@ yolo::Detection TrackingController::getLastDetection() const
     return m_detections.back();
 }
 
-void TrackingController::drawDetectionOnFrame(const Mat &f_input_frame, const yolo::Detection &f_detection)
+void TrackingController::drawDetectionOnFrame(const Mat &f_inputFrame, const yolo::Detection &f_detection)
 {
     const cv::Rect   &box   = f_detection.box;
     const cv::Scalar &color = f_detection.color;
 
     // Draw bounding box
-    cv::rectangle(f_input_frame, box, color, 2);
+    cv::rectangle(f_inputFrame, box, color, 2);
 
     // Draw label
     std::string label    = f_detection.className + ": " + std::to_string(f_detection.confidence).substr(0, 4);
     cv::Size    textSize = cv::getTextSize(label, cv::FONT_HERSHEY_DUPLEX, 1, 2, 0);
     cv::Rect    textBox(box.x, box.y - 40, textSize.width + 10, textSize.height + 20);
-    cv::rectangle(f_input_frame, textBox, color, cv::FILLED);
-    cv::putText(f_input_frame, label, cv::Point(box.x + 5, box.y - 10), cv::FONT_HERSHEY_DUPLEX, 1, cv::Scalar(0, 0, 0),
+    cv::rectangle(f_inputFrame, textBox, color, cv::FILLED);
+    cv::putText(f_inputFrame, label, cv::Point(box.x + 5, box.y - 10), cv::FONT_HERSHEY_DUPLEX, 1, cv::Scalar(0, 0, 0),
                 2, 0);
 }
 
-void TrackingController::drawTrajectoryOnFrame(const Mat &f_input_frame) const
+void TrackingController::drawTrajectoryOnFrame(const Mat &f_inputFrame) const
 {
     // At least two detections are needed for drawing a trajectory
     if (m_detections.size() < 2)
@@ -72,11 +72,11 @@ void TrackingController::drawTrajectoryOnFrame(const Mat &f_input_frame) const
             m_detections[i].box.tl() + cv::Point(m_detections[i].box.width / 2, m_detections[i].box.height / 2);
 
         // Draw line between two centers of detections
-        cv::line(f_input_frame, p1, p2, m_detections[i].color, 3);
+        cv::line(f_inputFrame, p1, p2, m_detections[i].color, 3);
 
         // Draw center points
-        cv::circle(f_input_frame, p1, 3, m_detections[i - 1].color, cv::FILLED);
-        cv::circle(f_input_frame, p2, 3, m_detections[i].color, cv::FILLED);
+        cv::circle(f_inputFrame, p1, 3, m_detections[i - 1].color, cv::FILLED);
+        cv::circle(f_inputFrame, p2, 3, m_detections[i].color, cv::FILLED);
     }
 }
 

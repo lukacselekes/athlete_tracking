@@ -2,7 +2,7 @@
 
 namespace yolo
 {
-Inference::Inference(const std::string &onnxModelPath, const cv::Size &modelInputShape, const bool &runWithCuda)
+YoloDetector::YoloDetector(const std::string &onnxModelPath, const cv::Size &modelInputShape, const bool &runWithCuda)
 {
     modelPath   = onnxModelPath;
     modelShape  = modelInputShape;
@@ -11,7 +11,7 @@ Inference::Inference(const std::string &onnxModelPath, const cv::Size &modelInpu
     loadOnnxNetwork();
 }
 
-std::vector<Detection> Inference::runInference(const cv::Mat &input)
+std::vector<Detection> YoloDetector::runInference(const cv::Mat &input)
 {
     cv::Mat modelInput = input;
     if (letterBoxForSquare && modelShape.width == modelShape.height)
@@ -94,7 +94,7 @@ std::vector<Detection> Inference::runInference(const cv::Mat &input)
     return detections;
 }
 
-void Inference::loadOnnxNetwork()
+void YoloDetector::loadOnnxNetwork()
 {
     net = cv::dnn::readNetFromONNX(modelPath);
     if (cudaEnabled)
@@ -111,7 +111,7 @@ void Inference::loadOnnxNetwork()
     }
 }
 
-cv::Mat Inference::formatToSquare(const cv::Mat &source)
+cv::Mat YoloDetector::formatToSquare(const cv::Mat &source)
 {
     int     col    = source.cols;
     int     row    = source.rows;

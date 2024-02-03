@@ -14,22 +14,22 @@ namespace tracking
 class TrackingController
 {
   public:
-    TrackingController(const yolo::Inference &f_yolo_detector);
+    TrackingController(const yolo::YoloDetector &f_yoloDetector);
 
-    void runTracking(const Mat &f_input_frame);
+    void runTracking(const Mat &f_inputFrame);
 
     yolo::Detection getLastDetection() const;
 
-    static void drawDetectionOnFrame(const Mat &f_input_frame, const yolo::Detection &f_detection);
+    static void drawDetectionOnFrame(const Mat &f_inputFrame, const yolo::Detection &f_detection);
 
-    void drawTrajectoryOnFrame(const Mat &f_input_frame) const;
+    void drawTrajectoryOnFrame(const Mat &f_inputFrame) const;
 
     void saveDetectionsToFile(const std::string &f_filePath) const;
 
     bool wasDetectedInCurrentFrame() const;
 
   private:
-    yolo::Inference       m_yolo_detector;
+    yolo::YoloDetector       m_yoloDetector;
     yolo::DetectionVector m_detections;
 
     bool m_wasDetectedInCurrentFrame = false;

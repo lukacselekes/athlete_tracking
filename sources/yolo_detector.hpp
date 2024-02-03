@@ -2,7 +2,6 @@
 #define YOLO_DETECTOR_HPP
 
 // Cpp native
-#include <fstream>
 #include <random>
 #include <string>
 #include <vector>
@@ -27,10 +26,10 @@ struct Detection
 
 using DetectionVector = std::vector<Detection>;
 
-class Inference
+class YoloDetector
 {
   public:
-    Inference(const std::string &onnxModelPath, const cv::Size &modelInputShape = {640, 640},
+    YoloDetector(const std::string &onnxModelPath, const cv::Size &modelInputShape = {640, 640},
               const bool &runWithCuda = true);
     DetectionVector runInference(const cv::Mat &input);
 
