@@ -1,8 +1,8 @@
 #ifndef TRACKING_CONTROLLER_HPP
 #define TRACKING_CONTROLLER_HPP
 
-#include <opencv2/opencv.hpp>
 #include <fstream>
+#include <opencv2/opencv.hpp>
 
 #include "yolo_detector.hpp"
 
@@ -20,13 +20,22 @@ class TrackingController
 
     yolo::Detection getLastDetection() const;
 
-    static void drawDetectionOnFrame(const Mat &f_input_frame, yolo::Detection &f_detection);
-    
+    static void drawDetectionOnFrame(const Mat &f_input_frame, const yolo::Detection &f_detection);
+
+    void drawTrajectoryOnFrame(const Mat &f_input_frame) const;
+
     void saveDetectionsToFile(const std::string &f_filePath) const;
 
+    bool wasDetectedInCurrentFrame() const;
+
   private:
+    static void drawLineForTwoDetections(const Mat &f_input_frame, const yolo::Detection &f_detection1,
+                                         const yolo::Detection &f_detection2);
+
     yolo::Inference       m_yolo_detector;
     yolo::DetectionVector m_detections;
+
+    bool m_wasDetectedInCurrentFrame = false;
 };
 
 } // namespace tracking

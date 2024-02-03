@@ -3,8 +3,7 @@
 namespace tracking
 {
 
-TrackingController::TrackingController(const yolo::Inference &f_yolo_detector)
-    : m_yolo_detector(f_yolo_detector)
+TrackingController::TrackingController(const yolo::Inference &f_yolo_detector) : m_yolo_detector(f_yolo_detector)
 {
 }
 
@@ -13,9 +12,16 @@ void TrackingController::runTracking(const Mat &f_input_frame)
     // Run inference using yolo detector
     std::vector<yolo::Detection> output = m_yolo_detector.runInference(f_input_frame);
 
+    if (output.empty())
+    {
+        m_wasDetectedInCurrentFrame = false;
+        return;
+    }
+
     assert(output.size() == 1 && "Only one person should be detected");
 
     m_detections.push_back(output[0]);
+    m_wasDetectedInCurrentFrame = true;
 }
 
 yolo::Detection TrackingController::getLastDetection() const
@@ -23,7 +29,7 @@ yolo::Detection TrackingController::getLastDetection() const
     return m_detections.back();
 }
 
-void TrackingController::drawDetectionOnFrame(const Mat &f_input_frame, yolo::Detection &f_detection)
+void TrackingController::drawDetectionOnFrame(const Mat &f_input_frame, const yolo::Detection &f_detection)
 {
     const cv::Rect   &box   = f_detection.box;
     const cv::Scalar &color = f_detection.color;
@@ -40,6 +46,27 @@ void TrackingController::drawDetectionOnFrame(const Mat &f_input_frame, yolo::De
                 2, 0);
 }
 
+void TrackingController::drawTrajectoryOnFrame(const Mat &f_input_frame) const
+{
+    if (m_detections.size() < 2)
+    {
+        return;
+    }
+
+    for (size_t i = 1; i < m_detections.size(); ++i)
+    {
+        const cv::Point &p1 = m_detections[i - 1].box.tl() +
+                              cv::Point(m_detections[i - 1].box.width / 2, m_detections[i - 1].box.height / 2);
+        const cv::Point &p2 =
+            m_detections[i].box.tl() + cv::Point(m_detections[i].box.width / 2, m_detections[i].box.height / 2);
+
+        cv::line(f_input_frame, p1, p2, m_detections[i].color, 3);
+
+        cv::circle(f_input_frame, p1, 3, m_detections[i - 1].color, cv::FILLED);
+        cv::circle(f_input_frame, p2, 3, m_detections[i].color, cv::FILLED);
+    }
+}
+
 void TrackingController::saveDetectionsToFile(const std::string &f_filePath) const
 {
     std::ofstream file(f_filePath);
@@ -53,6 +80,11 @@ void TrackingController::saveDetectionsToFile(const std::string &f_filePath) con
     std::cout << "Detections were saved to: " << f_filePath << std::endl;
 
     file.close();
+}
+
+bool TrackingController::wasDetectedInCurrentFrame() const
+{
+    return m_wasDetectedInCurrentFrame;
 }
 
 } // namespace tracking

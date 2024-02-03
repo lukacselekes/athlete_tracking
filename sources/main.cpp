@@ -52,15 +52,28 @@ int main(int argc, char **argv)
 
         // If the frame is empty, break immediately
         if (frame.empty())
+        {
+            cout << "Frame is empty" << endl;
             break;
+        }
 
         // auto output_frame = tracking::detectPersonOnFrame(frame, yolo);
 
         trackingController.runTracking(frame);
 
+        if (!trackingController.wasDetectedInCurrentFrame())
+        {
+            continue;
+        }
+
         auto lastDetection = trackingController.getLastDetection();
 
         trackingController.drawDetectionOnFrame(frame, lastDetection);
+
+        if (config::DRAW_TRAJECTORY)
+        {
+            trackingController.drawTrajectoryOnFrame(frame);
+        }
 
         // This is only for preview purposes
         cv::resize(frame, frame, cv::Size(out_width * config::OUTPUT_SCALE, out_height * config::OUTPUT_SCALE));
