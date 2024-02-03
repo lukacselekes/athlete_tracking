@@ -20,7 +20,10 @@ int main(int argc, char **argv)
 
     // Check if video opened successfully
     if (!cap.isOpened()) // check if we succeeded
+    {
+        cout << "Could not open video: " << config::VIDEO_PATH << endl;
         return -1;
+    }
 
     // Window for displaying
     namedWindow("Video", 1);
@@ -57,19 +60,22 @@ int main(int argc, char **argv)
             break;
         }
 
-        // auto output_frame = tracking::detectPersonOnFrame(frame, yolo);
-
+        // Run tracking
         trackingController.runTracking(frame);
 
+        // If no detection was made in the current frame, continue to the next frame
         if (!trackingController.wasDetectedInCurrentFrame())
         {
             continue;
         }
 
+        // Get last detection to draw on the frame
         auto lastDetection = trackingController.getLastDetection();
 
+        // Draw detection on the frame
         trackingController.drawDetectionOnFrame(frame, lastDetection);
 
+        // Draw trajectory on the frame
         if (config::DRAW_TRAJECTORY)
         {
             trackingController.drawTrajectoryOnFrame(frame);
@@ -93,6 +99,7 @@ int main(int argc, char **argv)
     outVideo.release();
     destroyAllWindows();
 
+    // Print some messages
     cout << "Video processing finished" << endl;
     cout << "Output video was saved to: " << outputVideoPath << endl;
 

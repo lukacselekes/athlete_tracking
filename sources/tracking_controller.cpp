@@ -12,6 +12,7 @@ void TrackingController::runTracking(const Mat &f_input_frame)
     // Run inference using yolo detector
     std::vector<yolo::Detection> output = m_yolo_detector.runInference(f_input_frame);
 
+    // If no person was detected, return
     if (output.empty())
     {
         m_wasDetectedInCurrentFrame = false;
@@ -20,6 +21,7 @@ void TrackingController::runTracking(const Mat &f_input_frame)
 
     assert(output.size() == 1 && "Only one person should be detected");
 
+    // Save detection
     m_detections.push_back(output[0]);
     m_wasDetectedInCurrentFrame = true;
 }
@@ -48,6 +50,7 @@ void TrackingController::drawDetectionOnFrame(const Mat &f_input_frame, const yo
 
 void TrackingController::drawTrajectoryOnFrame(const Mat &f_input_frame) const
 {
+    // At least two detections are needed for drawing a trajectory
     if (m_detections.size() < 2)
     {
         return;
@@ -55,13 +58,16 @@ void TrackingController::drawTrajectoryOnFrame(const Mat &f_input_frame) const
 
     for (size_t i = 1; i < m_detections.size(); ++i)
     {
+        // Get center point of two consecutive detections
         const cv::Point &p1 = m_detections[i - 1].box.tl() +
                               cv::Point(m_detections[i - 1].box.width / 2, m_detections[i - 1].box.height / 2);
         const cv::Point &p2 =
             m_detections[i].box.tl() + cv::Point(m_detections[i].box.width / 2, m_detections[i].box.height / 2);
 
+        // Draw line between two centers of detections
         cv::line(f_input_frame, p1, p2, m_detections[i].color, 3);
 
+        // Draw center points
         cv::circle(f_input_frame, p1, 3, m_detections[i - 1].color, cv::FILLED);
         cv::circle(f_input_frame, p2, 3, m_detections[i].color, cv::FILLED);
     }
@@ -71,6 +77,7 @@ void TrackingController::saveDetectionsToFile(const std::string &f_filePath) con
 {
     std::ofstream file(f_filePath);
 
+    // Write detections to file
     for (const auto &detection : m_detections)
     {
         file << detection.box.x << " " << detection.box.y << " " << detection.box.width << " " << detection.box.height
