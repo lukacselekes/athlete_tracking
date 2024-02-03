@@ -4,4 +4,4 @@ This application implements a naive tracking algorithm based on the YOLOv8 detec
 
 The application is implemented in C++ using the OpenCV library for loading the YOLOv8 model, loading videos, drawing on images and saving videos.
 
-![alt-text](drill_1_out.gif)
+![alt-text](media/drill_1_out.gif)
