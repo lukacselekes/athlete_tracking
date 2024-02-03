@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 project(athlete_tracking VERSION 0.1 LANGUAGES C CXX)
 
+set(CMAKE_CXX_STANDARD 17)
+
 include(CTest)
 enable_testing()
 
@@ -9,10 +11,15 @@ include_directories( ${OpenCV_INCLUDE_DIRS})
 
 
 add_executable(athlete_tracking 
-main.cpp
+sources/main.cpp
 
-yolo_detector.hpp
-yolo_detector.cpp)
+sources/yolo_detector.hpp
+sources/yolo_detector.cpp
+
+sources/tracking_controller.hpp
+sources/tracking_controller.cpp
+
+sources/tracking_config.hpp)
 
 target_link_libraries(athlete_tracking ${OpenCV_LIBS})
 
