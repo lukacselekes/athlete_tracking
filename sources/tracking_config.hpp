@@ -19,5 +19,6 @@ const std::string VIDEO_PATH   = PROJECT_BASE_PATH + "/assets/" + VIDEO_NAME + V
 const std::string OUTPUT_DIR = PROJECT_BASE_PATH + "/output";
 
 const bool DRAW_TRAJECTORY = true;
+const int  DETECTOR_FREQ   = 10;
 
 } // namespace config

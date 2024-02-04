@@ -3,6 +3,8 @@
 
 #include <fstream>
 #include <opencv2/opencv.hpp>
+#include <opencv2/video/tracking.hpp>
+#include <optional>
 
 #include "yolo_detector.hpp"
 
@@ -14,7 +16,7 @@ namespace tracking
 class TrackingController
 {
   public:
-    TrackingController(const yolo::YoloDetector &f_yoloDetector);
+    TrackingController(const yolo::YoloDetector &f_yoloDetector, const int &f_detectorFrequency = 10);
 
     void runTracking(const Mat &f_inputFrame);
 
@@ -29,9 +31,19 @@ class TrackingController
     bool wasDetectedInCurrentFrame() const;
 
   private:
-    yolo::YoloDetector       m_yoloDetector;
-    yolo::DetectionVector m_detections;
+    void runDetector(const Mat &f_inputFrame, std::optional<yolo::Detection> &f_detection);
 
+    void runTracker(const Mat &f_inputFrame, std::optional<yolo::Detection> &f_detection);
+
+    bool shouldDetectorRun();
+
+    yolo::YoloDetector    m_yoloDetector;
+    yolo::DetectionVector m_detections;
+    cv::Ptr<cv::Tracker>  m_tracker;
+
+    int m_detectorFrequency;
+
+    bool m_trackerInitialized        = false;
     bool m_wasDetectedInCurrentFrame = false;
     int  m_frameCounter              = 0;
 };

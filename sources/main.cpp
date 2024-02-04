@@ -44,7 +44,7 @@ int main(int argc, char **argv)
                           Size(config::OUTPUT_SCALE * out_width, config::OUTPUT_SCALE * out_height));
 
     // Init tracking controller
-    tracking::TrackingController trackingController(yolo);
+    tracking::TrackingController trackingController(yolo, config::DETECTOR_FREQ);
 
     for (;;)
     {
@@ -60,8 +60,14 @@ int main(int argc, char **argv)
             break;
         }
 
+        // Start timer
+        double timer = (double)getTickCount();
+
         // Run tracking
         trackingController.runTracking(frame);
+
+        // Calculate Frames per second (FPS)
+        float fps = getTickFrequency() / ((double)getTickCount() - timer);
 
         // If no detection was made in the current frame, continue to the next frame
         if (!trackingController.wasDetectedInCurrentFrame())
@@ -83,6 +89,9 @@ int main(int argc, char **argv)
 
         // This is only for preview purposes
         cv::resize(frame, frame, cv::Size(out_width * config::OUTPUT_SCALE, out_height * config::OUTPUT_SCALE));
+
+        // Display FPS on frame
+        putText(frame, "FPS: " + to_string(int(fps)), Point(50, 50), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0, 255, 0), 2);
 
         // Display the resulting frame
         imshow("Video", frame);

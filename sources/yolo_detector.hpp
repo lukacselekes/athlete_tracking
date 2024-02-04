@@ -16,12 +16,19 @@ namespace yolo
 
 struct Detection
 {
+    enum EType
+    {
+        Detected = 0,
+        Tracked
+    };
+
     int         class_id{0};
     std::string className{};
     float       confidence{0.0};
     cv::Scalar  color{};
     cv::Rect    box{};
     int         frameNumber{0};
+    EType       type{Detected};
 };
 
 using DetectionVector = std::vector<Detection>;
@@ -30,7 +37,7 @@ class YoloDetector
 {
   public:
     YoloDetector(const std::string &onnxModelPath, const cv::Size &modelInputShape = {640, 640},
-              const bool &runWithCuda = true);
+                 const bool &runWithCuda = true);
     DetectionVector runInference(const cv::Mat &input);
 
   private:
